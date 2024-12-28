@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二次函數圖形變化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .slider-container {
+            display: inline-block;
+            margin: 10px;
+        }
+        .slider-label {
+            margin-right: 10px;
+        }
+        .separator {
+            margin-top: 30px;
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>二次函數圖形變化</h1>
+    <div class="slider-container">
+        <label class="slider-label" for="a">a:</label>
+        <input type="range" id="a" min="-3" max="3" step="1" value="1">
+        <span id="a-value">1</span>
+    </div>
+    <div class="slider-container">
+        <label class="slider-label" for="b">b:</label>
+        <input type="range" id="b" min="-6" max="6" step="1" value="0">
+        <span id="b-value">0</span>
+    </div>
+    <div class="slider-container">
+        <label class="slider-label" for="c">c:</label>
+        <input type="range" id="c" min="-2" max="2" step="1" value="0">
+        <span id="c-value">0</span>
+    </div>
+    <div class="separator"></div>
+    <div class="slider-container">
+        <label class="slider-label" for="translate-x">平移 x:</label>
+        <input type="range" id="translate-x" min="-10" max="10" step="1" value="0">
+        <span id="translate-x-value">0</span>
+    </div>
+    <div class="slider-container">
+        <label class="slider-label" for="translate-y">平移 y:</label>
+        <input type="range" id="translate-y" min="-10" max="10" step="1" value="0">
+        <span id="translate-y-value">0</span>
+    </div>
+    <canvas id="myChart" width="400" height="400"></canvas>
+
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'y = a(x+b)^2 + c',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }, {
+                    label: 'y = (x+3)^2',
+                    data: [],
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: -10,
+                        max: 10
+                    },
+                    y: {
+                        min: -10,
+                        max: 10
+                    }
+                }
+            }
+        });
+
+        function updateChart() {
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+            const c = parseFloat(document.getElementById('c').value);
+            const translateX = parseFloat(document.getElementById('translate-x').value);
+            const translateY = parseFloat(document.getElementById('translate-y').value);
+
+            document.getElementById('a-value').textContent = a;
+            document.getElementById('b-value').textContent = b;
+            document.getElementById('c-value').textContent = c;
+            document.getElementById('translate-x-value').textContent = translateX;
+            document.getElementById('translate-y-value').textContent = translateY;
+
+            const xValues = [];
+            const yValues = [];
+            const yTargetValues = [];
+
+            for (let x = -10; x <= 10; x += 0.1) {
+                xValues.push(x);
+                yValues.push(a * Math.pow(x - b + translateX, 2) + c + translateY);
+                yTargetValues.push(Math.pow(x + 3, 2));
+            }
+
+            chart.data.labels = xValues;
+            chart.data.datasets[0].data = yValues;
+            chart.data.datasets[1].data = yTargetValues;
+            chart.update();
+        }
+
+        document.getElementById('a').addEventListener('input', updateChart);
+        document.getElementById('b').addEventListener('input', updateChart);
+        document.getElementById('c').addEventListener('input', updateChart);
+        document.getElementById('translate-x').addEventListener('input', updateChart);
+        document.getElementById('translate-y').addEventListener('input', updateChart);
+
+        updateChart();
+    </script>
+</body>
+</html>
